@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py-invoice-ninja"
+version = "1.0.0"
+description = "A Python SDK for the Invoice Ninja API - a full port of go-invoice-ninja"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Ashkan Yarmoradi" }]
+requires-python = ">=3.9"
+dependencies = []
+keywords = ["invoice-ninja", "invoicing", "api", "sdk", "payments"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Accounting",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/AshkanYarmoradi/go-invoice-ninja"
+Documentation = "https://github.com/AshkanYarmoradi/go-invoice-ninja/docs"
+
+[tool.setuptools]
+packages = ["invoice_ninja"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
