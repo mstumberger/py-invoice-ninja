@@ -77,6 +77,13 @@ The login endpoint is rate-limited to a handful of calls per minute, so cache th
 # Custom transport (any object with a request() method, see UrllibTransport)
 client = Client("token", http_client=my_transport)
 
+# Prefer the requests library? Use the bundled adapter (pip install requests).
+# A single transport/Session can serve both login() and every API call.
+from invoice_ninja.transports import RequestsTransport
+
+transport = RequestsTransport()
+client = Client("token", http_client=transport)
+
 # Custom base URL (for self-hosted)
 client = Client("token", base_url="https://your-instance.com")
 
@@ -412,6 +419,7 @@ Check out the `examples/` directory for complete working examples:
 
 - [Basic usage](examples/basic.py) - getting started
 - [Login with email/password](examples/login.py) - obtaining an API token
+- [requests transport](examples/requests_transport.py) - using the requests library as the HTTP layer
 - [Invoice management](examples/invoices.py) - creating and managing invoices
 - [Webhook handling](examples/webhooks.py) - setting up webhook handlers
 
