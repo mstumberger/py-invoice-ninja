@@ -88,7 +88,7 @@ from .webhooks import (
     WebhookHandler,
 )
 
-__version__ = VERSION
+__version__ = VERSION  # single source of truth: invoice_ninja/_version.py
 
 __all__ = [
     "__version__",

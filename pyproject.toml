@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "py-invoice-ninja"
-version = "1.0.0"
+dynamic = ["version"]
 description = "A Python SDK for the Invoice Ninja API - a full port of go-invoice-ninja"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -33,6 +33,9 @@ Documentation = "https://github.com/AshkanYarmoradi/go-invoice-ninja/docs"
 
 [tool.setuptools]
 packages = ["invoice_ninja"]
+
+[tool.setuptools.dynamic]
+version = { attr = "invoice_ninja._version.__version__" }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
