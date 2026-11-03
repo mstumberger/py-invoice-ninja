@@ -9,7 +9,7 @@ description = "A Python SDK for the Invoice Ninja API - a full port of go-invoic
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [{ name = "Ashkan Yarmoradi" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = []
 keywords = ["invoice-ninja", "invoicing", "api", "sdk", "payments"]
 classifiers = [
@@ -18,11 +18,11 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Office/Business :: Financial :: Accounting",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]

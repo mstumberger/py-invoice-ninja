@@ -88,6 +88,10 @@ from .webhooks import (
     WebhookHandler,
 )
 
+# requests is imported lazily inside RequestsTransport, keeping the package
+# dependency-free; import requests before instantiating it.
+from .transports import RequestsTransport
+
 __version__ = VERSION  # single source of truth: invoice_ninja/_version.py
 
 __all__ = [
@@ -164,4 +168,6 @@ __all__ = [
     "MAX_WEBHOOK_BODY_BYTES",
     "SIGNATURE_HEADER",
     "LEGACY_SIGNATURE_HEADER",
+    # optional transports (requests)
+    "RequestsTransport",
 ]
