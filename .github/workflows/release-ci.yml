@@ -1,0 +1,106 @@
+# This CI is used to manually trigger the release procedure of the SDK.
+# It runs manually with a single input:
+#   version -> release version, e.g. 0.1.0, 1.0.0 (semver)
+#
+# CI runs the tests, bumps __version__ in invoice_ninja/_version.py, commits
+# and pushes the bump back to the release branch, tags and creates a GitHub
+# release, then builds the sdist/wheel and publishes it to PyPI using
+# trusted publishing (GitHub Actions OpenID Connect):
+# https://docs.pypi.org/trusted-publishers/
+# The publisher is registered on PyPI for workflow release-ci.yml and the
+# "pypi" environment; no API token secret is stored.
+
+name: Release CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (semver, e.g. 0.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  id-token: write  # OIDC token for PyPI trusted publishing
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+
+  # Run the test suite before releasing anything.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install . requests
+
+      - name: Run tests
+        run: python -m unittest -v
+
+  # Bump __version__, commit, tag, create the GitHub release, then build and
+  # publish the distribution to PyPI with twine.
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    # Matches the environment name registered in the PyPI trusted publisher.
+    environment: pypi
+    env:
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history and credentials so the version-bump commit can be
+          # pushed back to the repository.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate version input
+        run: |
+          echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            || { echo "version must be semver, e.g. 0.1.0"; exit 1; }
+          git fetch --tags
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            echo "tag v$VERSION already exists"; exit 1
+          fi
+
+      - name: Bump version file
+        run: |
+          sed -i 's/^__version__ = ".*"/__version__ = "'"$VERSION"'"/' invoice_ninja/_version.py
+          cat invoice_ninja/_version.py
+          grep -q "__version__ = \"$VERSION\"" invoice_ninja/_version.py
+
+      - name: Commit, tag and push back
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add invoice_ninja/_version.py
+          git commit -m "release: v$VERSION"
+          git tag "v$VERSION"
+          git push origin "HEAD:${GITHUB_REF_NAME}" "refs/tags/v$VERSION"
+
+      - name: Create GitHub release
+        run: gh release create "v$VERSION" --generate-notes --title "v$VERSION"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Build sdist and wheel
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build
+
+      - name: Publish to PyPI (trusted publishing via OIDC; twine under the hood)
+        uses: pypa/gh-action-pypi-publish@release/v1

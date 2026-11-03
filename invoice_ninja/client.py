@@ -25,6 +25,7 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Any, Callable, Mapping, Optional, Sequence, Tuple, Union
 
+from ._version import __version__ as VERSION
 from .errors import Headers, InvoiceNinjaError, NetworkError, parse_api_error
 from .models import Model
 from .retry import DEFAULT_REQUESTS_PER_SECOND, RateLimiter, RetryConfig, default_retry_config
@@ -48,9 +49,6 @@ DEMO_BASE_URL = "https://demo.invoiceninja.com"
 
 #: Default HTTP timeout in seconds.
 DEFAULT_TIMEOUT = 30.0
-
-#: SDK version.
-VERSION = "1.0.0"
 
 _JSON_MEDIA_TYPE = "application/json"
 
